@@ -1,0 +1,7 @@
+2026-06-07 16:59:10,692 INFO PROCESSED sales_day_1.csv rows=14286 valid=13750 quarantined=536
+2026-06-07 16:59:10,963 INFO PROCESSED sales_day_2.csv rows=14286 valid=13770 quarantined=516
+2026-06-07 16:59:11,183 INFO PROCESSED sales_day_3.csv rows=14286 valid=13753 quarantined=533
+2026-06-07 16:59:11,419 INFO PROCESSED sales_day_4.csv rows=14286 valid=13750 quarantined=536
+2026-06-07 16:59:11,646 INFO PROCESSED sales_day_5.csv rows=14286 valid=13765 quarantined=521
+2026-06-07 16:59:11,871 INFO PROCESSED sales_day_6.csv rows=14285 valid=13739 quarantined=546
+2026-06-07 16:59:12,095 INFO PROCESSED sales_day_7.csv rows=14285 valid=13723 quarantined=562

@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: pos-postgres
+
+    environment:
+      POSTGRES_DB: posdb
+      POSTGRES_USER: posuser
+      POSTGRES_PASSWORD: pospassword
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U posuser -d posdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  generate-data:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pos-generate-data
+
+    volumes:
+      - ./data:/app/data
+
+    command: ["python", "generate_data.py"]
+
+  etl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pos-etl-runner
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: posdb
+      DB_USER: posuser
+      DB_PASSWORD: pospassword
+      RAW_DIR: /app/data/raw
+
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+
+    command: ["python", "etl_pipeline.py"]
+
+volumes:
+  postgres_data:

@@ -1,0 +1,15 @@
+2026-06-14 15:46:44,035 INFO Discovered 7 CSV files in /app/data/raw
+2026-06-14 15:46:44,041 INFO PROCESSING file: sales_day_1.csv
+2026-06-14 15:46:44,443 INFO PROCESSED sales_day_1.csv rows=14286 valid=13750 quarantined=536
+2026-06-14 15:46:44,447 INFO PROCESSING file: sales_day_2.csv
+2026-06-14 15:46:44,859 INFO PROCESSED sales_day_2.csv rows=14286 valid=13770 quarantined=516
+2026-06-14 15:46:44,862 INFO PROCESSING file: sales_day_3.csv
+2026-06-14 15:46:45,285 INFO PROCESSED sales_day_3.csv rows=14286 valid=13753 quarantined=533
+2026-06-14 15:46:45,289 INFO PROCESSING file: sales_day_4.csv
+2026-06-14 15:46:45,727 INFO PROCESSED sales_day_4.csv rows=14286 valid=13750 quarantined=536
+2026-06-14 15:46:45,731 INFO PROCESSING file: sales_day_5.csv
+2026-06-14 15:46:46,206 INFO PROCESSED sales_day_5.csv rows=14286 valid=13765 quarantined=521
+2026-06-14 15:46:46,209 INFO PROCESSING file: sales_day_6.csv
+2026-06-14 15:46:46,648 INFO PROCESSED sales_day_6.csv rows=14285 valid=13739 quarantined=546
+2026-06-14 15:46:46,652 INFO PROCESSING file: sales_day_7.csv
+2026-06-14 15:46:47,086 INFO PROCESSED sales_day_7.csv rows=14285 valid=13723 quarantined=562
