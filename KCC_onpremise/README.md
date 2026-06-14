@@ -48,7 +48,10 @@ pos-etl/
 ### Start PostgreSQL
 
 ```bash
-docker compose up -d
+docker compose -f docker-compose.postgresql.yml build --no-cache 
+docker compose -f docker-compose.postgresql.yml up -d postgres 
+docker compose -f docker-compose.postgresql.yml run --rm generate-data 
+docker compose -f docker-compose.postgresql.yml run --rm etl
 ```
 
 ### Verify Database
