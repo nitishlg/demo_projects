@@ -45,7 +45,7 @@ pos-etl/
 
 ## Setup
 
-### Start PostgreSQL
+### Docker commands to build, generate csv , run ETL
 
 ```bash
 docker compose -f docker-compose.postgresql.yml build --no-cache 
@@ -76,23 +76,6 @@ Files are created in:
 data/raw/
 ```
 
----
-
-## Run ETL Pipeline
-
-```bash
-python etl_pipeline.py
-```
-
-The pipeline will:
-
-1. Discover CSV files automatically
-2. Validate records
-3. Quarantine invalid rows
-4. Deduplicate transactions
-5. Load clean data into PostgreSQL
-
----
 
 ## Database Tables
 
@@ -141,14 +124,3 @@ transaction_id
 2. Keep the record with the latest timestamp; discard the rest
 3. Log how many duplicates were removed per run
 
----
-
-## Reporting
-
-| Object Name |
-|------------|
-| fact_sales |
-| error_quarantine |
-| file_ingestion_log |
-| pipeline_run_log |
-| vw_store_daily_summary |
