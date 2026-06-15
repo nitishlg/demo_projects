@@ -25,23 +25,6 @@ The pipeline:
 
 ---
 
-## Project Structure
-
-```text
-pos-etl/
-├── data/
-│   └── raw/
-├── sql/
-│   ├── schema.sql
-│   └── views.sql
-├── generate_data.py
-├── etl_pipeline.py
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
-
----
 
 ## Setup
 
@@ -61,21 +44,6 @@ docker ps
 ```
 
 ---
-
-## Generate Test Data
-
-Generate 7 CSV files containing approximately 100,000 records:
-
-```bash
-python generate_data.py
-```
-
-Files are created in:
-
-```text
-data/raw/
-```
-
 
 ## Database Tables
 
