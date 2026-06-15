@@ -118,12 +118,12 @@ Stores reconciliation and processing metrics.
 
 | Field          | Rule            |
 | -------------- | --------------- |
-| transaction_id | Required        |
+| transaction_id | Not nullable        |
 | price          | Numeric and > 0 |
 | quantity       | Integer and > 0 |
 | sku            | Max length 50   |
-| sku_name       | Required        |
-| timestamp      | Valid datetime  |
+| sku_name       | Not nullable        |
+| timestamp      | Must parse as valid datetime  |
 
 Invalid records are stored in `error_quarantine`.
 
@@ -137,60 +137,18 @@ Duplicate transactions are identified using:
 transaction_id
 ```
 
-If duplicates exist, the record with the latest timestamp is retained.
+1. Identify duplicate transaction_id values within and across files
+2. Keep the record with the latest timestamp; discard the rest
+3. Log how many duplicates were removed per run
 
 ---
 
 ## Reporting
 
-### Store Performance View
-
-```sql
-SELECT *
-FROM vw_store_daily_summary;
-```
-
-### Reconciliation Report
-
-```sql
-SELECT *
-FROM pipeline_run_log
-ORDER BY source_file;
-```
-
----
-
-## Assumptions
-
-* All timestamps are converted to UTC.
-* Business date is derived from transaction timestamp.
-* Duplicate transaction IDs keep the latest transaction timestamp.
-* Late-arriving records are processed using event time, not file arrival time.
-
----
-
-## Performance
-
-Target:
-
-```text
-100,000 rows processed in under 30 seconds
-```
-
-Optimizations:
-
-* Streaming CSV processing
-* Batch database inserts
-* Indexed lookup fields
-* Idempotent file tracking
-* SQL-based deduplication
-
----
-
-## Future Improvements
-
-* Airflow orchestration
-* Data quality dashboard
-* Automated alerting
-* Partitioned fact tables
-* Cloud object storage integration
+| Object Name |
+|------------|
+| fact_sales |
+| error_quarantine |
+| file_ingestion_log |
+| pipeline_run_log |
+| vw_store_daily_summary |
