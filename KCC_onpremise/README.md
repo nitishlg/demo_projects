@@ -1,94 +1,63 @@
-# POS ETL Pipeline
+# POS Sales ETL Pipeline
 
-## Overview
+A simple on-prem pipeline that loads daily store sales CSV files into
+PostgreSQL. Python lands the raw data; PostgreSQL procedures clean,
+validate, deduplicate, and load it.
 
-This project implements a production-grade ETL pipeline for retail Point-of-Sale (POS) transaction data.
-
-The pipeline:
-
-* Generates 7 days of POS transaction data (~100,000 records)
-* Simulates real-world data quality issues
-* Validates and cleans incoming data
-* Routes invalid records to a quarantine table
-* Deduplicates transactions using the latest timestamp
-* Loads clean data into PostgreSQL
-* Produces store-level reporting and reconciliation metrics
-
----
-
-## Tech Stack
-
-* Python 3.8+
-* PostgreSQL
-* Docker & Docker Compose
-* DBeaver (optional for database inspection)
-
----
-
+## Requirements
+- Python 3.8+
+- PostgreSQL
+- `pip install psycopg2-binary`
 
 ## Setup
-
-### Docker commands to build, generate csv , run ETL
-
-```bash
-docker compose -f docker-compose.postgresql.yml build --no-cache 
-docker compose -f docker-compose.postgresql.yml up -d postgres 
-docker compose -f docker-compose.postgresql.yml run --rm generate-data 
-docker compose -f docker-compose.postgresql.yml run --rm etl
-```
-
-### Verify Database
+Run the SQL files once, in this order:
 
 ```bash
-docker ps
+psql -d posdb -f sql/schema_all.sql        # create tables
+psql -d posdb -f sql/procedures_all.sql    # create functions + procedures
+psql -d posdb -f sql/04_views.sql          # create reporting views
 ```
 
----
+Set the database connection (defaults shown):
 
-## Database Tables
-
-### fact_sales
-
-Stores validated transaction records.
-
-### error_quarantine
-
-Stores invalid records and validation errors.
-
-### file_ingestion_log
-
-Tracks processed files and supports idempotent re-runs.
-
-### pipeline_run_log
-
-Stores reconciliation and processing metrics.
-
----
-
-## Validation Rules
-
-| Field          | Rule            |
-| -------------- | --------------- |
-| transaction_id | Not nullable        |
-| price          | Numeric and > 0 |
-| quantity       | Integer and > 0 |
-| sku            | Max length 50   |
-| sku_name       | Not nullable        |
-| timestamp      | Must parse as valid datetime  |
-
-Invalid records are stored in `error_quarantine`.
-
----
-
-## Deduplication
-
-Duplicate transactions are identified using:
-
-```text
-transaction_id
+```bash
+export DB_HOST=localhost DB_PORT=5432 DB_NAME=posdb DB_USER=posuser DB_PASSWORD=
+export RAW_DIR=data/raw
 ```
 
-1. Identify duplicate transaction_id values within and across files
-2. Keep the record with the latest timestamp; discard the rest
-3. Log how many duplicates were removed per run
+## How to run
+```bash
+python generate_data_simple.py   # 1. make 7 CSV files in data/raw/
+python loader_simple.py          # 2. load them into the database
+```
 
+The loader does everything: it reads each file, calls the database
+procedures, and loads the results. There is no separate step after it.
+
+## See the results
+```sql
+SELECT * FROM vw_reconciliation;        -- totals: raw / clean / errors / duplicates
+SELECT * FROM vw_file_reconciliation;   -- per-file breakdown
+SELECT * FROM vw_store_daily_summary;   -- revenue per store per day
+SELECT error_reason, COUNT(*) FROM error_quarantine GROUP BY 1;
+```
+
+## What it handles
+- Bad rows (wrong price, long SKU, missing fields) -> quarantined, not dropped
+- Duplicate transactions -> keeps the latest one
+- Late files -> a sale is counted on its real date, not the file's date
+- Re-running -> already-loaded files are skipped (safe to run again)
+
+## Result
+~100,000 rows load in under 30 seconds.
+Totals reconcile: raw = clean + errors + duplicates.
+
+## Tables
+| Table | What it holds |
+|-------|---------------|
+| `file_schema_master` | which files to accept and their columns |
+| `file_ingestion_log` | which files were loaded (for idempotency) |
+| `stg_raw_lines` | raw lines, straight from the CSV |
+| `fact_sales` | clean, deduplicated sales |
+| `error_quarantine` | rejected rows and the reason |
+| `pipeline_run_log` | per-file counts |
