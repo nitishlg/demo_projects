@@ -6,24 +6,19 @@ validate, deduplicate, and load it.
 
 ## Requirements
 - Python 3.8+
-- PostgreSQL
-- `pip install psycopg2-binary`
+- PostgreSQL 
 
 ## Setup
 Run the SQL files once, in this order:
 
-```bash
-psql -d posdb -f sql/schema_all.sql        # create tables
-psql -d posdb -f sql/procedures_all.sql    # create functions + procedures
-psql -d posdb -f sql/04_views.sql          # create reporting views
+```powershell
+"C:\Program Files\PostgreSQL\18\bin\psql.exe"  -U postgres -d postgres -f D:\Aai.com\kcc\pos_etl_full_postgresql_repo\demo_projects\KCC_onpremise\sql\schema_all.sql
+"C:\Program Files\PostgreSQL\18\bin\psql.exe"  -U postgres -d postgres -f D:\Aai.com\kcc\pos_etl_full_postgresql_repo\demo_projects\KCC_onpremise\sql\procedures_all.sql
+"C:\Program Files\PostgreSQL\18\bin\psql.exe"  -U postgres -d postgres -f D:\Aai.com\kcc\pos_etl_full_postgresql_repo\demo_projects\KCC_onpremise\sql\views.sql
 ```
 
-Set the database connection (defaults shown):
-
-```bash
-export DB_HOST=localhost DB_PORT=5432 DB_NAME=posdb DB_USER=posuser DB_PASSWORD=
-export RAW_DIR=data/raw
-```
+ 
+ 
 
 ## How to run
 ```bash
@@ -36,7 +31,7 @@ procedures, and loads the results. There is no separate step after it.
 
 ## See the results
 ```sql
-SELECT * FROM vw_reconciliation;        -- totals: raw / clean / errors / duplicates
+SELECT * FROM vw_reconciliation;        -- total recs : raw / clean / errors / duplicates
 SELECT * FROM vw_file_reconciliation;   -- per-file breakdown
 SELECT * FROM vw_store_daily_summary;   -- revenue per store per day
 SELECT error_reason, COUNT(*) FROM error_quarantine GROUP BY 1;

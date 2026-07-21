@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 RAW_DIR = Path("data/raw")
-TOTAL_ROWS = 100_000
+TOTAL_ROWS = 100000
 DAYS = 7
 ERROR_RATE = 0.05
 ERROR_ROWS = int(TOTAL_ROWS * ERROR_RATE)
