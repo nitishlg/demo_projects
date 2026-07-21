@@ -48,7 +48,6 @@ def main():
 
     print("[4/4] Results")
 
-    # Proof the procedures ran: sp_process_file writes one row per file here.
     cur = conn.cursor()
     cur.execute(
         "SELECT source_file, raw_count, valid_count, error_count, "

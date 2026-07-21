@@ -95,12 +95,12 @@ def process_file(conn, path, rules):
     file_size = os.path.getsize(path)
     cur = conn.cursor()
 
-    # 1) already loaded? skip.
+
     if already_loaded(cur, file_name, file_size):
         print("skip (already loaded):", file_name)
         return
 
-    # 2) what columns should this file have? (from the master table)
+
     expected_cols = find_expected_cols(file_name, rules)
     if expected_cols is None:
         print("skip (unknown file type):", file_name)
@@ -108,7 +108,6 @@ def process_file(conn, path, rules):
 
     set_status(conn, file_name, path, file_size, "PROCESSING")
     try:
-        # 3) check the header matches the master table
         header = read_header(path)
         if header != expected_cols:
             raise ValueError("bad header: got %s, expected %s" % (header, expected_cols))
@@ -133,7 +132,7 @@ def process_file(conn, path, rules):
 def main():
     conn = psycopg2.connect(**DB)
     cur = conn.cursor()
-    rules = get_file_rules(cur)  # read the master table once
+    rules = get_file_rules(cur)
     print(os.listdir(RAW_DIR))
     for name in sorted(os.listdir(RAW_DIR)):
         if name.endswith(".csv"):
